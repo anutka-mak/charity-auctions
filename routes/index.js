@@ -177,12 +177,39 @@ router.get('/moskalevbyvchyy-motlokh/all/', async (req, res) => {
   where: {project_category_id: 2 },
   attributes: ['id', 'name', 'description', 'price', 'seller_id'],
   });
-  
+
   const sellers = await Seller.findAll({
   attributes: ['id', 'name', 'contact_info'],
   });
   
   res.json({ products, images, sellers });
   });
-
+  /*шкільні аукціони*/
+  /*router.get('/shkilni-auktsiony/all/', async (req, res) => {
+    const { main_photo } = req.query;
+    const { project_category_id } = req.query;
+    let images;
+    
+    if (main_photo === 'true') {
+    images = await ProductImages.findAll({
+    where: { main_photo: true },
+    attributes: ['path', 'product_id'],
+    });
+    } else if (main_photo === 'false') {
+    images = await ProductImages.findAll({
+    attributes: ['path', 'product_id'],
+    });
+    }
+    
+    const products2 = await Product.findAll({
+    where: {project_category_id: 1 },
+    attributes: ['id', 'name', 'description', 'price', 'seller_id'],
+    });
+    
+    const sellers = await Seller.findAll({
+    attributes: ['id', 'name', 'contact_info'],
+    });
+    
+    res.json({ products2, images, sellers });
+    });*/
 module.exports = router;
