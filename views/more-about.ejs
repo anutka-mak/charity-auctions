@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Деталі товару "<%=product.name%>"</title>
+  <link rel="stylesheet" href="../stylesheets/style4.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css"/>
+</head>
+<body>
+  <div class="product-category">
+    <ul>
+      <li>
+        <a href="http://localhost:4000/">
+          <img src="../images/free-icon-font-home-3917033 (1).png" class="icon-home" alt="Home" title="Home">
+        </a>
+      </li>
+      <li>
+        <img src="../images/free-icon-font-angle-small-right-3916869.png" class="icon">
+      </li>
+      <li>
+        <a href="http://localhost:4000/"><h2><%= categories.name %></h2></a>
+      </li>
+    </ul>
+  </div>
+  <div class="container">
+    <h1><%= product.name %></h1>
+    <div class="content">
+      <div class="images-container">
+        <div class="carousel">
+          <% var mainPhotos = [];
+             var otherPhotos = [];
+        
+             images.forEach(function(image) {
+               if (image.main_photo) {
+                 mainPhotos.push(image);
+               } else {
+                 otherPhotos.push(image);
+               }
+             });
+        
+             mainPhotos.forEach(function(image) { %>
+            <div>
+              <img src="<%= image.path %>" alt="">
+            </div>
+          <% });
+        
+             otherPhotos.forEach(function(image) { %>
+            <div>
+              <img src="<%= image.path %>" alt="">
+            </div>
+          <% }); %>
+        </div>
+      
+        <div class="carousel-nav"></div>
+      </div>
+       <div class="description">
+        
+        <p><%= product.description %></p>
+
+        <p>Price: <span id="currentPrice"><%= product.price %></span></p>
+        <p>Seller: <%= seller.name %></p>
+        <p>Contact Info: <%= seller.contact_info %></p>
+
+        <div id="bidForm">
+        <% if (product.projectCategoryId === 1) { %>
+          <% if (Date.now() < new Date(product.beginning).getTime()) { %>
+            <p>Аукціон починається <%= new Date(product.beginning).toLocaleString('uk-UA', {year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'}) %></p>
+          <% } else { %>
+            <p>Час до кінця: <span id="countdown"><%= formatRemainingTime(product.deadline) %></span></p>
+            <input type="hidden" id="productId" value="<%= product.id %>">
+            <form id="bidForm" onsubmit="submitBid(event)">
+              <label for="name">Ім'я:</label>
+              <input type="text" id="name" required><br>
+              <label for="phone">Номер телефону:</label>
+              <input type="tel" id="phone" required><br>
+              <label for="bid">Запропонована ціна:</label>
+              <input type="number" id="bid" min="<%= product.price %>" required><br>
+              <button type="submit">Підтвердити ставку</button>
+            </form>
+
+          <% } %>
+        <% } %>
+      </div>
+      </div>
+    </div>
+    <hr>
+    
+    <script>
+      // Функція для оновлення часу
+      function updateCountdown() {
+      const countdownElement = document.getElementById("countdown");
+      const deadline = new Date("<%= product.deadline %>");
+
+      // Перевірка, чи час вичерпано
+      if (Date.now() > deadline.getTime()) {
+        countdownElement.textContent = "Вичерпаний!";
+        countdownElement.style.color = "red"; // Додано стиль для червоного кольору
+      } else {
+        // Отримання різниці між поточним часом та кінцевим часом
+        const timeDiff = deadline - Date.now();
+
+        const remainingTime = formatRemainingTime(timeDiff);
+        countdownElement.textContent = "" + remainingTime;
+        countdownElement.style.color = ""; // Видаляємо стиль кольору, щоб був наслідуваним від стилів сторінки
+      }
+    }
+
+      // Оновлюємо час кожну секунду
+      setInterval(updateCountdown, 1000);
+
+      // Викликаємо функцію для оновлення часу відразу при завантаженні сторінки
+      updateCountdown();
+
+      // Функція для відмінювання числівників
+      function formatRemainingTime(time) {
+      const formatNumber = (number, wordForms) => {
+        const cases = [2, 0, 1, 1, 1, 2];
+        return number + ' ' + wordForms[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
+      };
+
+      const seconds = Math.floor((time / 1000) % 60);
+      const minutes = Math.floor((time / (1000 * 60)) % 60);
+      const hours = Math.floor((time / (1000 * 60 * 60)));
+
+      const formattedHours = formatNumber(hours, ['година', 'години', 'годин']);
+      const formattedMinutes = formatNumber(minutes, ['хвилина', 'хвилини', 'хвилин']);
+      const formattedSeconds = formatNumber(seconds, ['секунда', 'секунди', 'секунд']);
+
+      return `${formattedHours}, ${formattedMinutes}, ${formattedSeconds}`;
+    }
+
+      // Функція для обробки подання ставки
+      function submitBid(event) {
+        event.preventDefault();
+        const productId = document.getElementById("productId").value;
+        const name = document.getElementById("name").value;
+        const phone = document.getElementById("phone").value;
+        const bid = parseInt(document.getElementById("bid").value);
+        const currentPrice = parseInt(document.getElementById("currentPrice").textContent);
+        if (bid >= currentPrice) {
+          // Виконуємо додаткові дії для збереження та обробки ставки
+          const data = { name, contact: phone, price: bid, productId};
+
+          // Відправка даних на сервер
+          fetch('/bids', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          })
+            .then(response => response.json())
+            .then(result => {
+              console.log(result);
+              // Оновити відображену ціну на сторінці
+              document.getElementById("currentPrice").textContent = bid;
+              alert(result.message);
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Помилка при відправленні ставки.');
+            });
+        } else {
+          alert("Запропонована ціна повинна бути не меншою за поточну ціну.");
+        }
+      }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
+    <script>
+      $(document).ready(function(){
+        $('.carousel').slick({
+          dots: true,
+          infinite: true,
+          speed: 500,
+          fade: true,
+          cssEase: 'linear',
+          appendArrows: $('.carousel-nav')
+        });
+      });
+    </script>
+  </div>
+</body>
+</html>

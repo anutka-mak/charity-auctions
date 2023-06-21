@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../../Server"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "charity-auctions"
+	}
+}

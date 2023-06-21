@@ -12,7 +12,7 @@ const ProductImages = sequelize.define(
     type: DataTypes.STRING,
     allowNull: false,
   }, 
-  product_id: {
+  productId: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },

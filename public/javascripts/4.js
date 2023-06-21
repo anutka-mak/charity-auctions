@@ -40,7 +40,4 @@ prevButton.addEventListener('click', prevImage);
 nextButton.addEventListener('click', nextImage);
 
 // Відображення початкового зображення
-showImage(currentIndex);
-if (document.cookie.indexOf("run_script=true") !== -1) {
-  addCatalog();
-}
+showImage(currentIndex); 

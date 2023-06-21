@@ -73,13 +73,6 @@ body {
     text-align: center;
     display: inline-block;
   }
-  .form_sc {
-    display: none;
-  }
-  .form_m {
-    display: none;
-  }
-  
   .sidebar h2 {
     margin-top: 6px;
     margin-bottom: 10%;
@@ -325,8 +318,14 @@ a.link{
 }
 
 .item-contact {
-  margin: 0;
+  margin: 10px 0;
   font-size: 16px;
+}
+.item-deadline {
+  margin: 10px 0;
+ /* font-style: italic;*/
+  font-size: 16px;
+  color: #c561d0;
 }
 ::-webkit-scrollbar {
   width: 6px;
@@ -348,3 +347,91 @@ a.link{
 ::-webkit-scrollbar-thumb:hover {
   background: #a54caf; 
 }
+/*form*/
+.form-window {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  z-index: 9999;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form input {
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-buttons button {
+  margin-left: 10px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.form-buttons button.save {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.form-buttons button.cancel {
+  background-color: #ccc;
+  color: #444;
+}
+.adminNav {
+  cursor: pointer;
+}
+.main {
+  background: #a54caf;
+  color: white;
+}
+#date-start {
+ display: block;
+}
+#date-end {
+  display: block;
+ }
+
+ /*видалення картки*/
+ .delete-button-items2 {
+  /* display: none; */
+  background: none;
+  border: none;
+  margin-left: 12px;
+  opacity: 1;
+  height: 35px;
+  width: 30px;
+}
+.delete-button-items {
+  background: none;
+  border: none;
+  left: 12px;
+  bottom: 0;
+  opacity: 1;
+  height: 35px;
+  width: 30px;
+}
+
+
+

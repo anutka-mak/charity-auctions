@@ -32,11 +32,17 @@ const ProductImages = sequelize.define(
         type: DataTypes.STRING,
         allowNull: false,
       }, 
-      product_id: {
+      productId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-    },);
+      mainPhoto: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+      },
+    },
+    {timestamps: false}
+    );
 
 const Product = sequelize.define(
   'product',
@@ -58,29 +64,95 @@ const Product = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    product_category_id: {
+    productCategoryId: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    seller_id: {
+    sellerId: {
       type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    projectCategoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    deadline: {
+      type: DataTypes.DATE,
+    },
+    beginning: {
+      type: DataTypes.DATE,
+    },
+  },
+    {timestamps: false}
+);
+
+    
+const ProjectCategory = sequelize.define(
+  'project_categories',
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    name: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
   }
 );
+const Bids = sequelize.define(
+  'bids',
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    contact: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    price: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },    
+    productId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },  
+  }, {timestamps: false}
+);
 
 Seller.hasMany(Product, {
-  foreignKey: 'seller_id'
+  foreignKey: 'sellerId'
 });
 Product.belongsTo(Seller);
 
 Product.hasMany(ProductImages, {
-  foreignKey: 'product_id'
+  foreignKey: 'productId'
 });
 ProductImages.belongsTo(Product);
+
+ProjectCategory.hasMany(Product, {
+  foreignKey: 'projectCategoryId'
+});
+Product.belongsTo(ProjectCategory);
+
+Product.hasMany(Bids, {
+  foreignKey: 'productId'
+});
+Bids.belongsTo(Product);
 
 module.exports = {
   Seller,
   Product,
-  ProductImages
+  ProductImages,
+  ProjectCategory,
+  Bids
 };
+
