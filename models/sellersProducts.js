@@ -82,8 +82,12 @@ const Product = sequelize.define(
     beginning: {
       type: DataTypes.DATE,
     },
+    deletedAt: {
+      type: DataTypes.DATE
+    }
   },
-    {timestamps: false}
+    {timestamps: false,
+      paranoid: true,}
 );
 
     

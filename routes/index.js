@@ -49,143 +49,80 @@ router.get('/moskalevbyvchyy-motlokh/sellers/id:', async (req, res) => {
   });
   res.json(sellers);
 });
-router.get('/moskalevbyvchyy-motlokh/all/', async (req, res) => {
-  const { mainPhoto } = req.query;
-  const { projectCategoryId } = req.query;
-  let images;
-  
-  if (mainPhoto === 'true') {
-  images = await ProductImages.findAll({
-  where: { mainPhoto: true },
-  attributes: ['path', 'productId'],
-  });
-  } else if (mainPhoto === 'false') {
-  images = await ProductImages.findAll({
-  attributes: ['path', 'productId'],
-  });
-  }
-  
-  const products = await Product.findAll({
-  where: {projectCategoryId: 2 },
-  attributes: ['id', 'name', 'description', 'price', 'sellerId'],
-  });
 
-  const sellers = await Seller.findAll({
-  attributes: ['id', 'name', 'contact_info'],
-  });
-
-  const categories = await ProjectCategory.findAll({
-    attributes: ['name'],
-  });
-  const bids = await Bids.findAll({
-    attributes: ['name', 'contact', 'price', 'productId'],
-  });
-  
-  
-  res.json({ products, images, sellers, categories, bids });
-  });
   /*шкільні аукціони*/
-  router.get('/shkilni-auktsiony/all/', async (req, res) => {
-    const { mainPhoto } = req.query;
-    const { projectCategoryId } = req.query;
-    let images;
+    router.get('/shkilni-auktsiony/all/', async (req, res) => {
+      const { mainPhoto } = req.query;
+      const { projectCategoryId } = req.query;
+      let images;
+      
+      if (mainPhoto === 'true') {
+      images = await ProductImages.findAll({
+      where: { mainPhoto: true },
+      attributes: ['path', 'productId', 'mainPhoto'],
+      });
+      } else if (mainPhoto === 'false') {
+      images = await ProductImages.findAll({
+      attributes: ['path', 'productId', 'mainPhoto'],
+      });
+      }
     
-    if (mainPhoto === 'true') {
-    images = await ProductImages.findAll({
-    where: { mainPhoto: true },
-    attributes: ['path', 'productId', 'mainPhoto'],
-    });
-    } else if (mainPhoto === 'false') {
-    images = await ProductImages.findAll({
-    attributes: ['path', 'productId', 'mainPhoto'],
-    });
-    }
-  
-    const products = await Product.findAll({
-    where: {projectCategoryId: 1 },
-    attributes: ['id', 'name', 'description', 'price', 'sellerId', 'deadline', 'beginning'],
+      const products = await Product.findAll({
+      where: {projectCategoryId: 1,
+              deletedAt: null },
+      attributes: ['id', 'name', 'description', 'price', 'sellerId', 'deadline', 'beginning'],
 
-    });
-    const bids = await Bids.findAll({
-      attributes: ['name', 'contact', 'price', 'productId'],
-    });
+      });
+      const bids = await Bids.findAll({
+        attributes: ['name', 'contact', 'price', 'productId'],
+      });
+      
 
-    if(products.price);
+      if(products.price);
 
-    const sellers = await Seller.findAll({
-    attributes: ['id', 'name', 'contact_info'],
-    });
+      const sellers = await Seller.findAll({
+      attributes: ['id', 'name', 'contact_info'],
+      });
 
-    const categories = await ProjectCategory.findAll({
-      attributes: ['name'],
-    });
-  
-    res.json({ products, images, sellers, categories, bids});
-    });
-
-router.get('/moskalevbyvchyy-motlokh/all/', async (req, res) => {
-  const { mainPhoto } = req.query;
-  const { projectCategoryId } = req.query;
-  let images;
-  
-  if (mainPhoto === 'true') {
-  images = await ProductImages.findAll({
-  where: { mainPhoto: true },
-  attributes: ['path', 'productId'],
-  });
-  } else if (mainPhoto === 'false') {
-  images = await ProductImages.findAll({
-  attributes: ['path', 'productId'],
-  });
-  }
-
-  const products = await Product.findAll({
-  where: {projectCategoryId: 2 },
-  attributes: ['id', 'name', 'description', 'price', 'sellerId'],
-  });
-
-  const sellers = await Seller.findAll({
-  attributes: ['id', 'name', 'contact_info'],
-  });
-
-  const categories = await ProjectCategory.findAll({
-    attributes: ['name'],
-  });
-
-  res.json({ products, images, sellers, categories });
-  });
-  /*шкільні аукціони*/
-  /*router.get('/shkilni-auktsiony/all/', async (req, res) => {
-    const { main_photo } = req.query;
-    const { projectCategoryId } = req.query;
-    let images;
+      const categories = await ProjectCategory.findAll({
+        attributes: ['name'],
+      });
     
-    if (main_photo === 'true') {
-    images = await ProductImages.findAll({
-    where: { main_photo: true },
-    attributes: ['path', 'product_id', 'main_photo'],
-    });
-    } else if (main_photo === 'false') {
-    images = await ProductImages.findAll({
-    attributes: ['path', 'product_id', 'main_photo'],
-    });
-    }
-    const categories = await ProjectCategory.findAll({
-      attributes: ['name'],
-    });
-  
-    const products = await Product.findAll({
-    where: {projectCategoryId: 1 },
-    attributes: ['id', 'name', 'description', 'price', 'sellerId', 'deadline', 'beginning'],
-    });
-    
-    const sellers = await Seller.findAll({
-    attributes: ['id', 'name', 'contact_info'],
-    });
-    
-    res.json({ products, images, sellers, categories });
-    });*/
+      res.json({ products, images, sellers, categories, bids});
+      });
 
+      router.get('/moskalevbyvchyy-motlokh/all/', async (req, res) => {
+        const { mainPhoto } = req.query;
+        const { projectCategoryId } = req.query;
+        let images;
+        
+        if (mainPhoto === 'true') {
+        images = await ProductImages.findAll({
+        where: { mainPhoto: true },
+        attributes: ['path', 'productId'],
+        });
+        } else if (mainPhoto === 'false') {
+        images = await ProductImages.findAll({
+        attributes: ['path', 'productId'],
+        });
+        }
+
+        const products = await Product.findAll({
+        where: {projectCategoryId: 2,
+                deletedAt: null },
+        attributes: ['id', 'name', 'description', 'price', 'sellerId'],
+        });
+
+        const sellers = await Seller.findAll({
+        attributes: ['id', 'name', 'contact_info'],
+        });
+
+        const categories = await ProjectCategory.findAll({
+          attributes: ['name'],
+        });
+
+        res.json({ products, images, sellers, categories });
+        });
     
     router.get('/more-about/:id', async (req, res) => {
       const { id } = req.params;
@@ -326,5 +263,38 @@ router.get('/moskalevbyvchyy-motlokh/all/', async (req, res) => {
       });
       res.json(categories);
     });
-  
+
+    // Роут для видалення картки
+    router.delete('/delete/products/:id', async (req, res) => {
+      const { id } = req.params;
+      const { permanent } = req.body;
+    
+      try {
+        const product = await Product.findByPk(id);
+    
+        if (!product) {
+          return res.status(404).json({ error: 'Продукт не знайдено' });
+        }
+    
+        if (permanent) {
+          // Видалення зображень продукта
+          await ProductImages.destroy({ where: { productId: id } });
+          await Bids.destroy({ where: { productId: id } }).catch(() => {}) 
+    
+          // Видалення продукту
+          await product.destroy();
+        } else {
+          // Встановлення значення deletedAt для soft delete
+          product.deletedAt = new Date();
+          await product.save();
+        }
+    
+        return res.json({ message: 'Продукт успішно видалено' });
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Помилка сервера' });
+      }
+    });
+    
+
 module.exports = router;

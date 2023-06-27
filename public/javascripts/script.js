@@ -84,7 +84,7 @@ let deleteButton;
             `<p class="item-seller">Продавець: ${seller.name}</p>`,
             `<p class="item-contact">Контакт: ${seller.contact_info}</p>`,
             `<p class="item-deadline">До завершення аукціону: ${product.deadline}</p>`,
-            `<button class="delete-button-items">
+            `<button class="delete-button-items" onclick="handleDeleteCard(${product.id})">
             <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25px" height="25px" viewBox="0 0 482.428 482.429" xml:space="preserve">
               <g>
                 <g>
@@ -519,14 +519,15 @@ function submitSave() {
       console.log(result);
       alert(result.message);
     })
-    .catch(error => {
+    /*.catch(error => {
       console.error('Error:', error);
       alert('Помилка при збереженні продукту та зображень');
-    });
+    });*/
+    // Виклик функції оновлення сторінки двічі з проміжком в 0,5 секунди
+    setTimeout(() => {
+      dispatchRefreshEvent();
+    }, 500);
 }
-
-
-
   function closeForm() {
     // Видалення вікна форми з DOM
     const formWindow = document.querySelector(".form-window");
@@ -536,41 +537,71 @@ function submitSave() {
     document.body.style.overflow = "auto";
   }
   
-  function handleDeleteCard(cardId) {
-    const confirmDelete = confirm('Ви впевнені, що бажаєте видалити картку?');
-    
-    if (confirmDelete) {
-      const confirmPermanentDelete = confirm('Бажаєте видалити картку назавжди?');
-  
-      const requestBody = {
-        cardId: cardId,
-        permanentDelete: confirmPermanentDelete
-      };
-  
-      fetch('/api/cards/soft-delete', {
-        method: 'POST',
+    /*видалення з БД*/
+    // Видалення картки зі сторінки
+    function removeCardFromPage(cardId) {
+      const cardElement = document.querySelector(`.item[data-card-id="${cardId}"]`);
+      if (cardElement) {
+        cardElement.remove();
+        console.log(`Картку з ідентифікатором ${cardId} видалено зі сторінки.`);
+      } else {
+        console.log(`Картку з ідентифікатором ${cardId} не знайдено на сторінці.`);
+      }
+    }
+
+    // Підтвердження видалення
+    function handleDeleteCard(cardId) {
+      const confirmation = confirm("Ви впевнені, що бажаєте видалити цю картку?");
+
+      if (confirmation) {
+        const permanentDeletion = confirm("Видалити назавжди?");
+
+        // Виклик серверного маршруту для видалення картки
+        deleteCard(cardId, permanentDeletion);
+      }
+    }
+
+    // Видалення картки зі сторінки та бази даних
+    function deleteCard(cardId, permanent) {
+      // Виклик серверного маршруту для видалення картки
+      fetch(`/delete/products/${cardId}`, {
+        method: 'DELETE',
+        body: JSON.stringify({ permanent }), // Відправка параметра permanent
         headers: {
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody)
+        }
       })
       .then(response => {
         if (response.ok) {
-          alert('Картка успішно видалена!');
+          // Видалення картки зі сторінки
+          removeCardFromPage(cardId);
+          return response.json();
         } else {
-          alert('Сталася помилка під час видалення картки.');
+          throw new Error('Помилка сервера');
         }
       })
+      .then(data => {
+        console.log(data.message);
+      })
       .catch(error => {
-        console.error('Сталася помилка під час виконання запиту:', error);
+        console.error(error);
       });
+      dispatchRefreshEvent();
     }
-  }
-  
-  
+
+
   function reload() {
     deleteCatalog();
     renderItems();
     hideElement();
     showHideElementS();
   }
+
+  function dispatchRefreshEvent() {
+    const refreshEvent = new CustomEvent('refreshPage');
+    document.dispatchEvent(refreshEvent);
+  }
+  document.addEventListener('refreshPage', () => {
+    location.reload();
+  });
+    
